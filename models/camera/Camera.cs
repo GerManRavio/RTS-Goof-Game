@@ -7,259 +7,291 @@ namespace RTSGoofGame.models.camera;
 
 public partial class Camera : Camera3D
 {
-	[Export] public float MovementSpeed = 10.0f;
-	[Export] public float SpeedMultiplier = 2.5f;
-	[Export] public Control SelectionBox;
+    [Export] public float MovementSpeed = 10.0f;
+    [Export] public float SpeedMultiplier = 2.5f;
+    [Export] public Control SelectionBox;
 
-	[Export] public float ZoomSpeed = 5.0f;
-	[Export] public float MinZoom = 5.0f;
-	[Export] public float MaxZoom = 50.0f;
-	[Export] public float ZoomDuration = 0.2f;
+    [Export] public float ZoomSpeed = 5.0f;
+    [Export] public float MinZoom = 5.0f;
+    [Export] public float MaxZoom = 50.0f;
+    [Export] public float ZoomDuration = 0.2f;
 
+    [Export] public Label FpsLabel;
+    [Export] public Label UnitCountLabel;
 
-	private Vector2 _dragStart;
-	private bool _isDragging;
-	private readonly Queue<float> _rotationCameraQueue = new();
-	private bool _isRotating;
-	private HashSet<Unit> _selectedUnits = [];
+    private Vector2 _dragStart;
+    private bool _isDragging;
+    private readonly Queue<float> _rotationCameraQueue = new();
+    private bool _isRotating;
+    private readonly HashSet<Unit> _selectedUnits = [];
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-	}
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+        base._Ready();
+    }
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-		var inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    public override void _Process(double delta)
+    {
+        UpdateUi();
+        var inputDir = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
 
-		if (inputDir != Vector2.Zero)
-		{
-			var currentSpeed = MovementSpeed;
+        if (inputDir != Vector2.Zero)
+        {
+            var currentSpeed = MovementSpeed;
 
-			if (Input.IsActionPressed("ui_shift"))
-			{
-				currentSpeed *= SpeedMultiplier;
-			}
+            if (Input.IsActionPressed("ui_shift"))
+            {
+                currentSpeed *= SpeedMultiplier;
+            }
 
-			var direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
+            var direction = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
 
-			var velocity = new Vector3(direction.X, 0, direction.Z) * currentSpeed * (float)delta;
-			GlobalPosition += velocity;
-		}
-	}
+            var velocity = new Vector3(direction.X, 0, direction.Z) * currentSpeed * (float)delta;
+            GlobalPosition += velocity;
+        }
+    }
 
-	public override void _UnhandledInput(InputEvent @event)
-	{
-		if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left } leftClickEvent)
-		{
-			if (leftClickEvent.Pressed)
-			{
-				_dragStart = leftClickEvent.Position;
-				_isDragging = true;
-			}
-			else if (_isDragging)
-			{
-				_isDragging = false;
-				SelectionBox.Visible = false;
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left } leftClickEvent)
+        {
+            if (leftClickEvent.Pressed)
+            {
+                _dragStart = leftClickEvent.Position;
+                _isDragging = true;
+            }
+            else if (_isDragging)
+            {
+                _isDragging = false;
+                SelectionBox.Visible = false;
 
-				var isStepping = Input.IsActionPressed("ui_shift") || Input.IsKeyPressed(Key.Shift);
+                var isStepping = Input.IsActionPressed("ui_shift") || Input.IsKeyPressed(Key.Shift);
 
-				if (_dragStart.DistanceTo(leftClickEvent.Position) < 5)
-				{
-					SelectUnitAtMousePosition(leftClickEvent.Position, isStepping);
-				}
-				else
-				{
-					SelectUnitsInBox(_dragStart, leftClickEvent.Position, isStepping);
-				}
-			}
-		}
+                if (_dragStart.DistanceTo(leftClickEvent.Position) < 5)
+                {
+                    SelectUnitAtMousePosition(leftClickEvent.Position, isStepping);
+                }
+                else
+                {
+                    SelectUnitsInBox(_dragStart, leftClickEvent.Position, isStepping);
+                }
+            }
+        }
 
-		if (@event is InputEventMouseMotion mouseMotionEvent && _isDragging)
-		{
-			UpdateSelectionBox(mouseMotionEvent.Position);
-		}
+        if (@event is InputEventMouseMotion mouseMotionEvent && _isDragging)
+        {
+            UpdateSelectionBox(mouseMotionEvent.Position);
+        }
 
-		if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Right } rightClickEvent)
-		{
-			OrderMovementToSelectedUnits(rightClickEvent.Position);
-		}
-	}
+        if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Right } rightClickEvent)
+        {
+            OrderMovementToSelectedUnits(rightClickEvent.Position);
+        }
+    }
 
-	public override void _Input(InputEvent @event)
-	{
-		if (_rotationCameraQueue.Count < 3)
-		{
-			if (@event.IsActionPressed("rotate_left"))
-			{
-				_rotationCameraQueue.Enqueue(Mathf.Pi / 2.0f);
-				ProcessRotateCameraQueue();
-			}
-			else if (@event.IsActionPressed("rotate_right"))
-			{
-				_rotationCameraQueue.Enqueue(-Mathf.Pi / 2.0f);
-				ProcessRotateCameraQueue();
-			}
-		}
+    public override void _Input(InputEvent @event)
+    {
+        if (_rotationCameraQueue.Count < 3)
+        {
+            if (@event.IsActionPressed("rotate_left"))
+            {
+                _rotationCameraQueue.Enqueue(Mathf.Pi / 2.0f);
+                ProcessRotateCameraQueue();
+            }
+            else if (@event.IsActionPressed("rotate_right"))
+            {
+                _rotationCameraQueue.Enqueue(-Mathf.Pi / 2.0f);
+                ProcessRotateCameraQueue();
+            }
+        }
 
-		if (@event.IsActionPressed("zoom_in")) ZoomCamera(-ZoomSpeed);
-		if (@event.IsActionPressed("zoom_out")) ZoomCamera(ZoomSpeed);
+        if (@event.IsActionPressed("zoom_in")) ZoomCamera(-ZoomSpeed);
+        if (@event.IsActionPressed("zoom_out")) ZoomCamera(ZoomSpeed);
 
-		base._Input(@event);
-	}
+        base._Input(@event);
+    }
 
-	#region Camera Rotation
+    #region UI
 
-	private void ZoomCamera(float amount)
-	{
-		var zoomVector = Transform.Basis.Z * amount;
-		var targetPos = GlobalPosition + zoomVector;
+    private void UpdateUi()
+    {
+        if (FpsLabel != null)
+        {
+            FpsLabel.Text = $"FPS: {Engine.GetFramesPerSecond()}";
+        }
 
-		if (Mathf.Abs(zoomVector.Y) > 0.001f)
-		{
-			if (targetPos.Y < MinZoom || targetPos.Y > MaxZoom)
-			{
-				var clampedY = Mathf.Clamp(targetPos.Y, MinZoom, MaxZoom);
-				var ratio = (clampedY - GlobalPosition.Y) / zoomVector.Y;
-				targetPos = GlobalPosition + (zoomVector * ratio);
-			}
-		}
+        if (UnitCountLabel != null)
+        {
+            var unitCount = GetTree().GetNodesInGroup("unit").Count;
+            UnitCountLabel.Text = $"Units: {unitCount}";
+        }
+    }
 
-		var tween = GetTree().CreateTween();
-		tween.SetTrans(Tween.TransitionType.Cubic);
-		tween.SetEase(Tween.EaseType.Out);
+    #endregion
 
-		tween.TweenProperty(this, "global_position", targetPos, ZoomDuration);
-	}
+    #region Camera Rotation
 
-	private void ProcessRotateCameraQueue()
-	{
-		if (_isRotating || _rotationCameraQueue.Count == 0)
-		{
-			return;
-		}
+    private void ZoomCamera(float amount)
+    {
+        var zoomVector = Transform.Basis.Z * amount;
+        var targetPos = GlobalPosition + zoomVector;
 
-		_isRotating = true;
-		var angleAmount = _rotationCameraQueue.Dequeue();
+        if (Mathf.Abs(zoomVector.Y) > 0.001f)
+        {
+            if (targetPos.Y < MinZoom || targetPos.Y > MaxZoom)
+            {
+                var clampedY = Mathf.Clamp(targetPos.Y, MinZoom, MaxZoom);
+                var ratio = (clampedY - GlobalPosition.Y) / zoomVector.Y;
+                targetPos = GlobalPosition + (zoomVector * ratio);
+            }
+        }
 
-		var tween = GetTree().CreateTween();
-		var targetRotationY = Rotation.Y + angleAmount;
+        var tween = GetTree().CreateTween();
+        tween.SetTrans(Tween.TransitionType.Cubic);
+        tween.SetEase(Tween.EaseType.Out);
 
-		tween.TweenProperty(this, "rotation:y", targetRotationY, 0.15f)
-			.SetTrans(Tween.TransitionType.Quad)
-			.SetEase(Tween.EaseType.Out);
+        tween.TweenProperty(this, "global_position", targetPos, ZoomDuration);
+    }
 
-		tween.Finished += () =>
-		{
-			_isRotating = false;
-			ProcessRotateCameraQueue();
-		};
-	}
+    private void ProcessRotateCameraQueue()
+    {
+        if (_isRotating || _rotationCameraQueue.Count == 0)
+        {
+            return;
+        }
 
-	#endregion
+        _isRotating = true;
+        var angleAmount = _rotationCameraQueue.Dequeue();
 
-	#region Unit Selection
+        var tween = GetTree().CreateTween();
+        var targetRotationY = Rotation.Y + angleAmount;
 
-	private void UpdateSelectionBox(Vector2 mousePos)
-	{
-		if (SelectionBox == null) return;
+        tween.TweenProperty(this, "rotation:y", targetRotationY, 0.15f)
+            .SetTrans(Tween.TransitionType.Quad)
+            .SetEase(Tween.EaseType.Out);
 
-		if (!SelectionBox.Visible) SelectionBox.Visible = true;
+        tween.Finished += () =>
+        {
+            _isRotating = false;
+            ProcessRotateCameraQueue();
+        };
+    }
 
-		// Berechne Größe und Position des Rechtecks
-		var size = (mousePos - _dragStart).Abs();
-		var pos = new Vector2(
-			Mathf.Min(_dragStart.X, mousePos.X),
-			Mathf.Min(_dragStart.Y, mousePos.Y)
-		);
+    #endregion
 
-		SelectionBox.Position = pos;
-		SelectionBox.Size = size;
-	}
+    #region Unit Selection
 
-	private void SelectUnitsInBox(Vector2 start, Vector2 end, bool append)
-	{
-		if (!append) DeselectAll();
+    private void UpdateSelectionBox(Vector2 mousePos)
+    {
+        if (SelectionBox == null) return;
 
-		var selectionRect = new Rect2(start, Vector2.Zero).Expand(end);
+        if (!SelectionBox.Visible) SelectionBox.Visible = true;
 
-		var allUnits = GetTree().GetNodesInGroup("units").OfType<Unit>();
+        var size = (mousePos - _dragStart).Abs();
+        var pos = new Vector2(
+            Mathf.Min(_dragStart.X, mousePos.X),
+            Mathf.Min(_dragStart.Y, mousePos.Y)
+        );
 
-		foreach (var unit in allUnits)
-		{
-			if (IsPositionBehind(unit.GlobalPosition)) continue;
+        SelectionBox.Position = pos;
+        SelectionBox.Size = size;
+    }
 
-			var screenPos = UnprojectPosition(unit.GlobalPosition);
+    private void SelectUnitsInBox(Vector2 start, Vector2 end, bool append)
+    {
+        if (!append) DeselectAll();
 
-			if (selectionRect.HasPoint(screenPos))
-			{
-				unit.SetSelected(true);
-				_selectedUnits.Add(unit);
-			}
-		}
-	}
+        var selectionRect = new Rect2(start, Vector2.Zero).Expand(end);
 
-	private void SelectUnitAtMousePosition(Vector2 mousePos, bool append)
-	{
-		var spaceState = GetWorld3D().DirectSpaceState;
-		var from = ProjectRayOrigin(mousePos);
-		var to = from + ProjectRayNormal(mousePos) * 1000f;
+        var allUnits = GetTree().GetNodesInGroup("unit").OfType<Unit>();
 
-		var query = PhysicsRayQueryParameters3D.Create(from, to);
-		var result = spaceState.IntersectRay(query);
+        foreach (var unit in allUnits)
+        {
+            if (IsPositionBehind(unit.GlobalPosition)) continue;
 
-		if (!append)
-			DeselectAll();
+            var screenPos = UnprojectPosition(unit.GlobalPosition);
 
-		if (result.Count <= 0) return;
+            if (selectionRect.HasPoint(screenPos))
+            {
+                unit.SetSelected(true);
+                _selectedUnits.Add(unit);
+            }
+        }
+    }
 
-		var clickedObject = result["collider"].As<Node3D>();
+    private void SelectUnitAtMousePosition(Vector2 mousePos, bool append)
+    {
+        var spaceState = GetWorld3D().DirectSpaceState;
+        var from = ProjectRayOrigin(mousePos);
+        var to = from + ProjectRayNormal(mousePos) * 1000f;
 
-		if (clickedObject is not Unit unit) return;
+        var query = PhysicsRayQueryParameters3D.Create(from, to);
+        var result = spaceState.IntersectRay(query);
 
-		if (_selectedUnits.Contains(unit))
-		{
-			unit.SetSelected(false);
-			_selectedUnits.Remove(unit);
-		}
-		else
-		{
-			GD.Print();
-			unit.SetSelected(true);
-			_selectedUnits.Add(unit);
-		}
-	}
+        if (!append)
+            DeselectAll();
 
-	private void OrderMovementToSelectedUnits(Vector2 mousePos)
-	{
-		var spaceState = GetWorld3D().DirectSpaceState;
-		var from = ProjectRayOrigin(mousePos);
-		var to = from + ProjectRayNormal(mousePos) * 1000f;
+        if (result.Count <= 0) return;
 
-		var query = PhysicsRayQueryParameters3D.Create(from, to);
-		var result = spaceState.IntersectRay(query);
+        var clickedObject = result["collider"].As<Node3D>();
 
-		if (result.Count > 0)
-		{
-			var targetPosition = (Vector3)result["position"];
+        if (clickedObject is not Unit unit) return;
 
-			foreach (var unit in _selectedUnits.Where(IsInstanceValid))
-			{
-				unit.MovementTarget = targetPosition;
-			}
-		}
-	}
+        if (_selectedUnits.Contains(unit))
+        {
+            unit.SetSelected(false);
+            _selectedUnits.Remove(unit);
+        }
+        else
+        {
+            unit.SetSelected(true);
+            _selectedUnits.Add(unit);
+        }
+    }
 
-	private void DeselectAll()
-	{
-		foreach (var unit in _selectedUnits.Where(IsInstanceValid))
-		{
-			unit.SetSelected(false);
-		}
+    private void OrderMovementToSelectedUnits(Vector2 mousePos)
+    {
+        var spaceState = GetWorld3D().DirectSpaceState;
+        var from = ProjectRayOrigin(mousePos);
+        var to = from + ProjectRayNormal(mousePos) * 1000f;
 
-		_selectedUnits.Clear();
-	}
+        var query = PhysicsRayQueryParameters3D.Create(from, to);
+        var result = spaceState.IntersectRay(query);
 
-	#endregion
+        if (result.Count > 0)
+        {
+            var targetPosition = (Vector3)result["position"];
+            var selectedList = _selectedUnits.Where(IsInstanceValid).ToList();
+            var count = selectedList.Count;
+
+            for (var i = 0; i < count; i++)
+            {
+                const float spacing = 1.8f;
+                var phi = i * Mathf.Pi * (3.0f - Mathf.Sqrt(5.0f));
+                var radius = spacing * Mathf.Sqrt(i);
+
+                var offset = new Vector3(
+                    Mathf.Cos(phi) * radius,
+                    0,
+                    Mathf.Sin(phi) * radius
+                );
+
+                selectedList[i].SetSpecificTarget(targetPosition + offset);
+            }
+        }
+    }
+
+    private void DeselectAll()
+    {
+        foreach (var unit in _selectedUnits.Where(IsInstanceValid))
+        {
+            unit.SetSelected(false);
+        }
+
+        _selectedUnits.Clear();
+    }
+
+    #endregion
 }

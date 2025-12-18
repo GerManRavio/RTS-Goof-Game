@@ -2,12 +2,36 @@
 
 [ext_resource type="Script" uid="uid://cu5dutposk6xc" path="res://models/camera/Camera.cs" id="1_61xdx"]
 
-[node name="Camera" type="Camera3D" node_paths=PackedStringArray("SelectionBox")]
+[node name="Camera" type="Camera3D" node_paths=PackedStringArray("SelectionBox", "FpsLabel", "UnitCountLabel")]
 script = ExtResource("1_61xdx")
-SelectionBox = NodePath("SelectionBoxUI")
+SelectionBox = NodePath("Control/SelectionBoxUI")
+FpsLabel = NodePath("Control/FPS Label")
+UnitCountLabel = NodePath("Control/Unit Count")
 
-[node name="SelectionBoxUI" type="ColorRect" parent="."]
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SelectionBoxUI" type="ColorRect" parent="Control"]
 visible = false
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
+color = Color(1, 1, 1, 0.19607843)
+
+[node name="FPS Label" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 82.0
+offset_right = 76.0
+offset_bottom = 105.0
+
+[node name="Unit Count" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 99.0
+offset_right = 52.0
+offset_bottom = 122.0
