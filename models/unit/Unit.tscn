@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=3 uid="uid://pwget8yoir44"]
+
+[ext_resource type="Script" uid="uid://b23bl2yyft2uf" path="res://models/unit/Unit.cs" id="1_twcus"]
+[ext_resource type="Material" path="res://red.tres" id="2_xdyq8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4sdmo"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_twcus"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_twcus"]
+
+[sub_resource type="TorusMesh" id="TorusMesh_twcus"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_xdyq8"]
+
+[node name="Unit" type="CharacterBody3D" node_paths=PackedStringArray("NavigationAgent", "_selectionBox") groups=["units"]]
+script = ExtResource("1_twcus")
+NavigationAgent = NodePath("NavigationAgent3D")
+_selectionBox = NodePath("SelectionBox")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_4sdmo")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+debug_enabled = true
+
+[node name="Body" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_twcus")
+
+[node name="ArmL" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.5, 0.2, -0.5)
+mesh = SubResource("SphereMesh_twcus")
+
+[node name="ArmR" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.5, 0.2, -0.5)
+mesh = SubResource("SphereMesh_twcus")
+
+[node name="EyeL" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.15, 0, 0, 0, -6.5567085e-09, -0.15, 0, 0.15, -6.5567085e-09, -0.15, 0.6, -0.46840912)
+mesh = SubResource("TorusMesh_twcus")
+
+[node name="EyeR" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.15, 0, 0, 0, -6.5567085e-09, -0.15, 0, 0.15, -6.5567085e-09, 0.15, 0.6, -0.46840912)
+mesh = SubResource("TorusMesh_twcus")
+skeleton = NodePath("../EyeL")
+
+[node name="SelectionBox" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
+visible = false
+material_override = ExtResource("2_xdyq8")
+transparency = 0.65
+mesh = SubResource("CapsuleMesh_xdyq8")

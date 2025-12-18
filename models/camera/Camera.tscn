@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://blhdxgp8rgxat"]
+
+[ext_resource type="Script" uid="uid://cu5dutposk6xc" path="res://models/camera/Camera.cs" id="1_61xdx"]
+
+[node name="Camera" type="Camera3D" node_paths=PackedStringArray("SelectionBox")]
+script = ExtResource("1_61xdx")
+SelectionBox = NodePath("SelectionBoxUI")
+
+[node name="SelectionBoxUI" type="ColorRect" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2

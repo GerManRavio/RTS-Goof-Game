@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://ct5uxuo0ggbg1"]
+
+[ext_resource type="PackedScene" uid="uid://blhdxgp8rgxat" path="res://models/camera/Camera.tscn" id="1_uu6xs"]
+[ext_resource type="PackedScene" uid="uid://pwget8yoir44" path="res://models/unit/Unit.tscn" id="2_r0du0"]
+[ext_resource type="Script" uid="uid://bcg4j31cwadto" path="res://SpawnUnits.cs" id="2_uu6xs"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uu6xs"]
+size = Vector3(1000, 0, 1000)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_rxg2q"]
+vertices = PackedVector3Array(-499.49994, 0.5, -499.49994, -499.49994, 0.5, 499.50006, 499.50006, 0.5, 499.50006, 499.50006, 0.5, -499.49994)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_glv2v"]
+size = Vector2(100, 100)
+
+[node name="Main" type="Node3D"]
+
+[node name="Camera" parent="." instance=ExtResource("1_uu6xs")]
+transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 6.8159957, 8.259956)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.66523033, 0.7466382, 0, -0.7466382, 0.66523033, 0, 10.752016, 14.693748)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_uu6xs")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="StaticBody3D"]
+navigation_mesh = SubResource("NavigationMesh_rxg2q")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D/NavigationRegion3D"]
+transform = Transform3D(9.999999, 0, 0, 0, 1, 0, 0, 0, 9.999999, 0, 0, 0)
+mesh = SubResource("PlaneMesh_glv2v")
+
+[node name="Timer" type="Timer" parent="." node_paths=PackedStringArray("SpawnPositionNode")]
+wait_time = 0.046
+autostart = true
+script = ExtResource("2_uu6xs")
+UnitScene = ExtResource("2_r0du0")
+SpawnPositionNode = NodePath("../Marker3D")
+
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48.428696, 0)
+gizmo_extents = 1.28
