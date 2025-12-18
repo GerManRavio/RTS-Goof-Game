@@ -1,0 +1,14 @@
+= RTS Goof Game
+
+A RTS, developed in Godot **Engine 4.5** and **C#**.
+
+== Controls
+
+*   **W A S D** - Move Camera
+*   **SHIFT** - accelaratied movment of Camera
+*   **Q / E** - Rotate Camera
+*   **Scroll** - Zoom in/out
+*   **Click** - Select a Unit
+*   **Drag Click** - Selects Units in Selection Box
+
+---
