@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://blhdxgp8rgxat"]
+[gd_scene load_steps=4 format=3 uid="uid://blhdxgp8rgxat"]
 
 [ext_resource type="Script" uid="uid://cu5dutposk6xc" path="res://models/camera/Camera.cs" id="1_61xdx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_61xdx"]
+albedo_color = Color(0.21185514, 0.665903, 0.8846337, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_1bhlj"]
+material = SubResource("StandardMaterial3D_61xdx")
+size = Vector3(1.16, 1, 0.695)
 
 [node name="Camera" type="Camera3D" node_paths=PackedStringArray("SelectionBox", "FpsLabel", "UnitCountLabel", "UnitSelectionCountLabel")]
 script = ExtResource("1_61xdx")
@@ -46,3 +53,8 @@ offset_top = 122.0
 offset_right = 124.0
 offset_bottom = 145.0
 text = "Selection Count"
+
+[node name="CameraBody" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+visibility_range_begin = 2.0
+mesh = SubResource("PrismMesh_1bhlj")

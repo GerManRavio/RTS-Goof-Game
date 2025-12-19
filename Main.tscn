@@ -36,7 +36,7 @@ mesh = SubResource("PlaneMesh_glv2v")
 skeleton = NodePath("../../..")
 
 [node name="Marker3D" type="Marker3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.104448, 15.50568, -8.838587)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.394852, 15.50568, -18.913666)
 gizmo_extents = 1.28
 
 [node name="Timer" type="Timer" parent="NavigationRegion3D" node_paths=PackedStringArray("SpawnPositionNode")]

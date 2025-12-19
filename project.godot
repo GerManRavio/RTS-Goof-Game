@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="RTS goof Game"
+config/name="RTS Goof Game"
 run/main_scene="uid://ct5uxuo0ggbg1"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.svg"
