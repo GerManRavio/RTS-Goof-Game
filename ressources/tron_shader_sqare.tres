@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dss20v6y26ibu"]
+
+[ext_resource type="Shader" uid="uid://d16kxeel58dtd" path="res://ressources/tron_shader_sqare.gdshader" id="1_o4xx6"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_o4xx6")

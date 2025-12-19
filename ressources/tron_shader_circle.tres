@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://btxgpjcx0wcpa"]
+
+[ext_resource type="Shader" uid="uid://mfe3xruycu6w" path="res://ressources/tron_shader_circle.gdshader" id="1_7ejfo"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_7ejfo")

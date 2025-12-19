@@ -38,14 +38,6 @@ public partial class Unit : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
-        var currentVelocity = Velocity;
-        if (!IsOnFloor())
-        {
-            currentVelocity += GetGravity() * (float)delta * 10.0f;
-        }
 
-        Velocity = currentVelocity;
-
-        MoveAndSlide();
     }
 }
