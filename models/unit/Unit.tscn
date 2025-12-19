@@ -30,19 +30,22 @@ debug_enabled = true
 [node name="Body" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_xdyq8")
 
-[node name="ArmL" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.5, 0.2, -0.5)
+[node name="ArmL" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.5, 0.2, -0.6)
 mesh = SubResource("BoxMesh_xdyq8")
+skeleton = NodePath("../..")
 
-[node name="ArmR" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.5, 0.2, -0.5)
+[node name="ArmR" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.5, 0.2, -0.6)
 mesh = SubResource("BoxMesh_xdyq8")
+skeleton = NodePath("../..")
 
-[node name="EyeL" type="MeshInstance3D" parent="."]
+[node name="EyeL" type="MeshInstance3D" parent="Body"]
 transform = Transform3D(0.15, 0, 0, 0, -6.5567085e-09, -0.15, 0, 0.15, -6.5567085e-09, -0.15, 0.8, -0.46840912)
 mesh = SubResource("BoxMesh_xdyq8")
+skeleton = NodePath("../..")
 
-[node name="EyeR" type="MeshInstance3D" parent="."]
+[node name="EyeR" type="MeshInstance3D" parent="Body"]
 transform = Transform3D(0.15, 0, 0, 0, -6.5567085e-09, -0.15, 0, 0.15, -6.5567085e-09, 0.15, 0.8, -0.46840912)
 mesh = SubResource("BoxMesh_xdyq8")
 skeleton = NodePath("../EyeL")

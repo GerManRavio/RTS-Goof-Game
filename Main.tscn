@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://ct5uxuo0ggbg1"]
+[gd_scene load_steps=10 format=3 uid="uid://ct5uxuo0ggbg1"]
 
 [ext_resource type="PackedScene" uid="uid://blhdxgp8rgxat" path="res://models/camera/Camera.tscn" id="1_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://pwget8yoir44" path="res://models/unit/Unit.tscn" id="2_r0du0"]
@@ -13,6 +13,12 @@ size = Vector3(1000, 0, 1000)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_glv2v"]
 size = Vector2(100, 100)
+
+[sub_resource type="Environment" id="Environment_cm0pq"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_fos0i"]
+
+[sub_resource type="Compositor" id="Compositor_3dxm6"]
 
 [node name="Main" type="Node3D"]
 
@@ -41,8 +47,14 @@ UnitScene = ExtResource("2_r0du0")
 SpawnPositionNode = NodePath("../Marker3D")
 MaxUnitCount = 500
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 0.66523033, 0.7466382, 0, -0.7466382, 0.66523033, 0, 10.752016, 14.693748)
-
 [node name="Camera" parent="NavigationRegion3D" instance=ExtResource("1_uu6xs")]
 transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 6.8159957, 8.259956)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.43051115, 0.90258527, 0, -0.90258527, 0.43051115, 100, 100, 100)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_cm0pq")
+camera_attributes = SubResource("CameraAttributesPractical_fos0i")
+compositor = SubResource("Compositor_3dxm6")
