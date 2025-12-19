@@ -130,7 +130,7 @@ public partial class Camera : Camera3D
             var unitCount = GetTree().GetNodesInGroup("unit").Count;
             UnitCountLabel.Text = $"Units: {unitCount}";
         }
-     
+
         _selectedUnits.RemoveWhere(u => !IsInstanceValid(u));
         if (UnitSelectionCountLabel != null)
         {
@@ -224,7 +224,7 @@ public partial class Camera : Camera3D
 
             if (selectionRect.HasPoint(screenPos))
             {
-                unit.SetSelected(true);
+                unit.IsSelected = true;
                 _selectedUnits.Add(unit);
             }
         }
@@ -250,12 +250,12 @@ public partial class Camera : Camera3D
 
         if (_selectedUnits.Contains(unit))
         {
-            unit.SetSelected(false);
+            unit.IsSelected = false;
             _selectedUnits.Remove(unit);
         }
         else
         {
-            unit.SetSelected(true);
+            unit.IsSelected = true;
             _selectedUnits.Add(unit);
         }
     }
@@ -286,7 +286,6 @@ public partial class Camera : Camera3D
                     0,
                     Mathf.Sin(phi) * radius
                 );
-
                 selectedList[i].SetSpecificTarget(targetPosition + offset);
             }
         }
@@ -296,7 +295,7 @@ public partial class Camera : Camera3D
     {
         foreach (var unit in _selectedUnits.Where(IsInstanceValid))
         {
-            unit.SetSelected(false);
+            unit.IsSelected = false;
         }
 
         _selectedUnits.Clear();

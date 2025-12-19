@@ -5,7 +5,12 @@ namespace RTSGoofGame.models.unit;
 public partial class Unit : CharacterBody3D
 {
     private float _movementSpeed = 5.0f;
-    private bool IsSelected { get; set; }
+
+    public bool IsSelected
+    {
+        get => _selectionBox.Visible;
+        set => _selectionBox.Visible = value;
+    }
 
     [Export] public NavigationAgent3D NavigationAgent { get; set; }
 
@@ -102,10 +107,5 @@ public partial class Unit : CharacterBody3D
                 MoveAndSlide();
             }
         }
-    }
-
-    public void SetSelected(bool selected)
-    {
-        _selectionBox.Visible = selected;
     }
 }
