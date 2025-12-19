@@ -140,23 +140,9 @@ public partial class Camera : Camera3D
             UnitSelectionCountLabel.Text = $"Selected Units: {_selectedUnits.Count}";
         }
     }
-    
+
     private void ToggleUnitDebug()
     {
-        var allUnits = GetTree().GetNodesInGroup("unit").OfType<Unit>();
-        var allUnitsArray = allUnits as Unit[] ?? allUnits.ToArray();
-        var firstUnit = allUnitsArray.FirstOrDefault();
-        if (firstUnit == null) return;
-
-        var newDebugState = !firstUnit.NavigationAgent.DebugEnabled;
-
-        foreach (var unit in allUnitsArray)
-        {
-            if (IsInstanceValid(unit) && unit.NavigationAgent != null)
-            {
-                unit.NavigationAgent.DebugEnabled = newDebugState;
-            }
-        }
     }
 
     #endregion
@@ -290,26 +276,8 @@ public partial class Camera : Camera3D
         var query = PhysicsRayQueryParameters3D.Create(from, to);
         var result = spaceState.IntersectRay(query);
 
-        if (result.Count > 0)
-        {
-            var targetPosition = (Vector3)result["position"];
-            var selectedList = _selectedUnits.Where(IsInstanceValid).ToList();
-            var count = selectedList.Count;
-
-            for (var i = 0; i < count; i++)
-            {
-                var spacing = selectedList[i].NavigationAgent.Radius * 2f;
-                var phi = i * Mathf.Pi * (3.0f - Mathf.Sqrt(5.0f));
-                var radius = spacing * Mathf.Sqrt(i);
-
-                var offset = new Vector3(
-                    Mathf.Cos(phi) * radius,
-                    0,
-                    Mathf.Sin(phi) * radius
-                );
-                selectedList[i].SetSpecificTarget(targetPosition + offset);
-            }
-        }
+        var targetPosition = (Vector3)result["position"];
+        
     }
 
     private void DeselectAll()

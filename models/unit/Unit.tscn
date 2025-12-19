@@ -13,19 +13,11 @@ albedo_color = Color(0.02745098, 0.85882354, 0, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_xdyq8"]
 
-[node name="Unit" type="CharacterBody3D" node_paths=PackedStringArray("NavigationAgent", "_selectionBox", "IsMovingNode", "IsFinishedNode") groups=["unit"]]
+[node name="Unit" type="CharacterBody3D" node_paths=PackedStringArray("_selectionBox", "IsMovingNode", "IsFinishedNode") groups=["unit"]]
 script = ExtResource("1_twcus")
-NavigationAgent = NodePath("NavigationAgent3D")
 _selectionBox = NodePath("SelectionBox")
 IsMovingNode = NodePath("IsMoving")
 IsFinishedNode = NodePath("IsFinished")
-
-[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-avoidance_enabled = true
-radius = 1.0
-neighbor_distance = 100.0
-max_neighbors = 500
-debug_enabled = true
 
 [node name="Body" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_xdyq8")

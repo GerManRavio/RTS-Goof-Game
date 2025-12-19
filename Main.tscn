@@ -1,18 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://ct5uxuo0ggbg1"]
+[gd_scene load_steps=9 format=3 uid="uid://ct5uxuo0ggbg1"]
 
 [ext_resource type="PackedScene" uid="uid://blhdxgp8rgxat" path="res://models/camera/Camera.tscn" id="1_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://pwget8yoir44" path="res://models/unit/Unit.tscn" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://bcg4j31cwadto" path="res://SpawnUnits.cs" id="2_uu6xs"]
-
-[sub_resource type="NavigationMesh" id="NavigationMesh_rxg2q"]
-vertices = PackedVector3Array(-499.5, 0.5, -499.5, -499.5, 0.5, 499.5, 499.5, 0.5, 499.5, 499.5, 0.5, -499.5)
-polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_uu6xs"]
-size = Vector3(1000, 0, 1000)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_glv2v"]
-size = Vector2(100, 100)
 
 [sub_resource type="Environment" id="Environment_cm0pq"]
 
@@ -20,35 +10,13 @@ size = Vector2(100, 100)
 
 [sub_resource type="Compositor" id="Compositor_3dxm6"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_uu6xs"]
+size = Vector3(1000, 0, 1000)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_glv2v"]
+size = Vector2(100, 100)
+
 [node name="Main" type="Node3D"]
-
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
-navigation_mesh = SubResource("NavigationMesh_rxg2q")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D"]
-shape = SubResource("BoxShape3D_uu6xs")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/StaticBody3D/CollisionShape3D"]
-transform = Transform3D(9.999999, 0, 0, 0, 1, 0, 0, 0, 9.999999, 0, 0, 0)
-mesh = SubResource("PlaneMesh_glv2v")
-skeleton = NodePath("../../..")
-
-[node name="Marker3D" type="Marker3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.394852, 15.50568, -18.913666)
-gizmo_extents = 1.28
-
-[node name="Timer" type="Timer" parent="NavigationRegion3D" node_paths=PackedStringArray("SpawnPositionNode")]
-wait_time = 0.001
-autostart = true
-script = ExtResource("2_uu6xs")
-UnitScene = ExtResource("2_r0du0")
-SpawnPositionNode = NodePath("../Marker3D")
-MaxUnitCount = 500
-
-[node name="Camera" parent="NavigationRegion3D" instance=ExtResource("1_uu6xs")]
-transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 6.8159957, 8.259956)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.43051115, 0.90258527, 0, -0.90258527, 0.43051115, 100, 100, 100)
@@ -58,3 +26,28 @@ shadow_enabled = true
 environment = SubResource("Environment_cm0pq")
 camera_attributes = SubResource("CameraAttributesPractical_fos0i")
 compositor = SubResource("Compositor_3dxm6")
+
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.394852, 15.50568, -18.913666)
+gizmo_extents = 1.28
+
+[node name="Timer" type="Timer" parent="." node_paths=PackedStringArray("SpawnPositionNode")]
+wait_time = 0.001
+autostart = true
+script = ExtResource("2_uu6xs")
+UnitScene = ExtResource("2_r0du0")
+SpawnPositionNode = NodePath("../Marker3D")
+MaxUnitCount = 500
+
+[node name="Camera" parent="." instance=ExtResource("1_uu6xs")]
+transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 6.8159957, 8.259956)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_uu6xs")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D/CollisionShape3D"]
+transform = Transform3D(9.999999, 0, 0, 0, 1, 0, 0, 0, 9.999999, 0, 0, 0)
+mesh = SubResource("PlaneMesh_glv2v")
+skeleton = NodePath("")
