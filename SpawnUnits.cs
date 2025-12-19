@@ -26,7 +26,10 @@ public partial class SpawnUnits : Timer
     private void OnTimeout()
     {
         if (UnitScene == null) return;
-        if (_unitCount >= MaxUnitCount) return;
+        if (_unitCount >= MaxUnitCount)
+        {
+            return;
+        };
 
         var unit = UnitScene.Instantiate<Node3D>();
         GetParent().AddChild(unit);

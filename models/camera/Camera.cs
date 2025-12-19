@@ -9,15 +9,16 @@ public partial class Camera : Camera3D
 {
     [Export] public float MovementSpeed = 10.0f;
     [Export] public float SpeedMultiplier = 2.5f;
-    [Export] public Control SelectionBox;
 
     [Export] public float ZoomSpeed = 5.0f;
     [Export] public float MinZoom = 5.0f;
     [Export] public float MaxZoom = 50.0f;
     [Export] public float ZoomDuration = 0.2f;
 
+    [Export] public Control SelectionBox;
     [Export] public Label FpsLabel;
     [Export] public Label UnitCountLabel;
+    [Export] public Label UnitSelectionCountLabel;
 
     private Vector2 _dragStart;
     private bool _isDragging;
@@ -55,34 +56,36 @@ public partial class Camera : Camera3D
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left } leftClickEvent)
+        switch (@event)
         {
-            if (leftClickEvent.Pressed)
-            {
+            case InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true } leftClickEvent:
                 _dragStart = leftClickEvent.Position;
                 _isDragging = true;
-            }
-            else if (_isDragging)
+                break;
+            case InputEventMouseButton { ButtonIndex: MouseButton.Left } leftClickEvent:
             {
-                _isDragging = false;
-                SelectionBox.Visible = false;
-
-                var isStepping = Input.IsActionPressed("ui_shift") || Input.IsKeyPressed(Key.Shift);
-
-                if (_dragStart.DistanceTo(leftClickEvent.Position) < 5)
+                if (_isDragging)
                 {
-                    SelectUnitAtMousePosition(leftClickEvent.Position, isStepping);
+                    _isDragging = false;
+                    SelectionBox.Visible = false;
+
+                    var isStepping = Input.IsActionPressed("ui_shift") || Input.IsKeyPressed(Key.Shift);
+
+                    if (_dragStart.DistanceTo(leftClickEvent.Position) < 5)
+                    {
+                        SelectUnitAtMousePosition(leftClickEvent.Position, isStepping);
+                    }
+                    else
+                    {
+                        SelectUnitsInBox(_dragStart, leftClickEvent.Position, isStepping);
+                    }
                 }
-                else
-                {
-                    SelectUnitsInBox(_dragStart, leftClickEvent.Position, isStepping);
-                }
+
+                break;
             }
-        }
-
-        if (@event is InputEventMouseMotion mouseMotionEvent && _isDragging)
-        {
-            UpdateSelectionBox(mouseMotionEvent.Position);
+            case InputEventMouseMotion mouseMotionEvent when _isDragging:
+                UpdateSelectionBox(mouseMotionEvent.Position);
+                break;
         }
 
         if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Right } rightClickEvent)
@@ -126,6 +129,12 @@ public partial class Camera : Camera3D
         {
             var unitCount = GetTree().GetNodesInGroup("unit").Count;
             UnitCountLabel.Text = $"Units: {unitCount}";
+        }
+     
+        _selectedUnits.RemoveWhere(u => !IsInstanceValid(u));
+        if (UnitSelectionCountLabel != null)
+        {
+            UnitSelectionCountLabel.Text = $"Selected Units: {_selectedUnits.Count}";
         }
     }
 

@@ -30,17 +30,16 @@ mesh = SubResource("PlaneMesh_glv2v")
 skeleton = NodePath("../../..")
 
 [node name="Marker3D" type="Marker3D" parent="NavigationRegion3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 48.428696, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.104448, 15.50568, -8.838587)
 gizmo_extents = 1.28
 
 [node name="Timer" type="Timer" parent="NavigationRegion3D" node_paths=PackedStringArray("SpawnPositionNode")]
-wait_time = 0.006
+wait_time = 0.001
 autostart = true
 script = ExtResource("2_uu6xs")
 UnitScene = ExtResource("2_r0du0")
 SpawnPositionNode = NodePath("../Marker3D")
 MaxUnitCount = 500
-GridWidth = 50
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 0.66523033, 0.7466382, 0, -0.7466382, 0.66523033, 0, 10.752016, 14.693748)

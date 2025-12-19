@@ -16,6 +16,7 @@ public partial class Unit : CharacterBody3D
 
     public void SetSpecificTarget(Vector3 target)
     {
+        Velocity = Vector3.Zero;
         NavigationAgent.TargetPosition = target;
         IsFinishedNode.Visible = false;
         IsMovingNode.Visible = true;
@@ -26,6 +27,40 @@ public partial class Unit : CharacterBody3D
         base._Ready();
         NavigationAgent.NavigationFinished += OnNavigationFinished;
         NavigationAgent.PathChanged += OnPathChanged;
+        NavigationAgent.VelocityComputed += OnVelocityComputed;
+    }
+
+    public override void _ExitTree()
+    {
+        NavigationAgent.NavigationFinished -= OnNavigationFinished;
+        NavigationAgent.PathChanged -= OnPathChanged;
+        NavigationAgent.VelocityComputed -= OnVelocityComputed;
+    }
+
+    private void OnVelocityComputed(Vector3 safeVelocity)
+    {
+        var velocityWithGravity = safeVelocity;
+
+        if (!IsOnFloor())
+        {
+            velocityWithGravity.Y = Velocity.Y;
+        }
+        else
+        {
+            velocityWithGravity.Y = 0;
+        }
+
+        Velocity = velocityWithGravity;
+
+        var horizontalVelocity = new Vector3(Velocity.X, 0, Velocity.Z);
+
+        if (horizontalVelocity.LengthSquared() > 0.1f)
+        {
+            var targetRotation = Basis.LookingAt(horizontalVelocity.Normalized()).GetRotationQuaternion();
+            Quaternion = Quaternion.Slerp(targetRotation, 0.15f);
+        }
+
+        MoveAndSlide();
     }
 
     private void OnNavigationFinished()
@@ -42,37 +77,31 @@ public partial class Unit : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
+        var currentVelocity = Velocity;
         if (!IsOnFloor())
         {
-            Velocity += GetGravity() * (float)delta * 10;
+            currentVelocity += GetGravity() * (float)delta * 10.0f;
         }
 
-        Vector3 desiredVelocity;
+        Velocity = currentVelocity;
 
-        if (!NavigationAgent.IsNavigationFinished())
+        if (!NavigationAgent.IsNavigationFinished() && NavigationAgent.IsTargetReachable())
         {
             var nextPosition = NavigationAgent.GetNextPathPosition();
             var direction = (nextPosition - GlobalPosition).Normalized();
-            desiredVelocity = direction * _movementSpeed;
 
-            NavigationAgent.Velocity = desiredVelocity;
-            
-            var lookDirection = direction;
-            lookDirection.Y = 0;
-            if (!lookDirection.IsZeroApprox() && lookDirection.LengthSquared() > 0.001f)
-            {
-                LookAt(GlobalPosition + lookDirection, Vector3.Up);
-            }
+            NavigationAgent.Velocity = direction * _movementSpeed;
         }
         else
         {
-            desiredVelocity = Velocity;
-            desiredVelocity.X = Mathf.MoveToward(Velocity.X, 0, _movementSpeed * (float)delta * 10);
-            desiredVelocity.Z = Mathf.MoveToward(Velocity.Z, 0, _movementSpeed * (float)delta * 10);
-        }
+            NavigationAgent.Velocity = Vector3.Zero;
 
-        Velocity = desiredVelocity;
-        MoveAndSlide();
+            if (Velocity.Length() > 0.1f)
+            {
+                Velocity = Velocity.MoveToward(Vector3.Zero, (float)delta * _movementSpeed);
+                MoveAndSlide();
+            }
+        }
     }
 
     public void SetSelected(bool selected)

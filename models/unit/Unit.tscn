@@ -1,27 +1,31 @@
-[gd_scene load_steps=12 format=3 uid="uid://pwget8yoir44"]
+[gd_scene load_steps=14 format=3 uid="uid://pwget8yoir44"]
 
 [ext_resource type="Script" uid="uid://b23bl2yyft2uf" path="res://models/unit/Unit.cs" id="1_twcus"]
 [ext_resource type="Material" uid="uid://qavn8mxa6d14" path="res://red.tres" id="2_xdyq8"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4sdmo"]
+[sub_resource type="BoxMesh" id="BoxMesh_xdyq8"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_twcus"]
+[sub_resource type="BoxMesh" id="BoxMesh_l6pv5"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_twcus"]
+[sub_resource type="BoxMesh" id="BoxMesh_16svf"]
 
-[sub_resource type="TorusMesh" id="TorusMesh_twcus"]
+[sub_resource type="BoxMesh" id="BoxMesh_bd6a3"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_xdyq8"]
+[sub_resource type="BoxMesh" id="BoxMesh_ogs58"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_pv0j2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xdyq8"]
 albedo_color = Color(0.868069, 5.198121e-06, 5.7756904e-07, 1)
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_l6pv5"]
+[sub_resource type="BoxMesh" id="BoxMesh_1whco"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_16svf"]
 albedo_color = Color(0.02745098, 0.85882354, 0, 1)
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_pv0j2"]
+[sub_resource type="BoxMesh" id="BoxMesh_spkmn"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xdyq8"]
 
 [node name="Unit" type="CharacterBody3D" node_paths=PackedStringArray("NavigationAgent", "_selectionBox", "IsMovingNode", "IsFinishedNode") groups=["unit"]]
 script = ExtResource("1_twcus")
@@ -30,36 +34,30 @@ _selectionBox = NodePath("SelectionBox")
 IsMovingNode = NodePath("IsMoving")
 IsFinishedNode = NodePath("IsFinished")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape3D_4sdmo")
-
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-path_postprocessing = 2
-path_search_max_distance = 20.0
 avoidance_enabled = true
-radius = 1.2
+neighbor_distance = 100.0
 max_neighbors = 500
-time_horizon_agents = 10.0
 debug_enabled = true
 
 [node name="Body" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_twcus")
+mesh = SubResource("BoxMesh_xdyq8")
 
 [node name="ArmL" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, -0.5, 0.2, -0.5)
-mesh = SubResource("SphereMesh_twcus")
+mesh = SubResource("BoxMesh_l6pv5")
 
 [node name="ArmR" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0.5, 0.2, -0.5)
-mesh = SubResource("SphereMesh_twcus")
+mesh = SubResource("BoxMesh_16svf")
 
 [node name="EyeL" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.15, 0, 0, 0, -6.5567085e-09, -0.15, 0, 0.15, -6.5567085e-09, -0.15, 0.6, -0.46840912)
-mesh = SubResource("TorusMesh_twcus")
+transform = Transform3D(0.15, 0, 0, 0, -6.5567085e-09, -0.15, 0, 0.15, -6.5567085e-09, -0.15, 0.8, -0.46840912)
+mesh = SubResource("BoxMesh_bd6a3")
 
 [node name="EyeR" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.15, 0, 0, 0, -6.5567085e-09, -0.15, 0, 0.15, -6.5567085e-09, 0.15, 0.6, -0.46840912)
-mesh = SubResource("TorusMesh_twcus")
+transform = Transform3D(0.15, 0, 0, 0, -6.5567085e-09, -0.15, 0, 0.15, -6.5567085e-09, 0.15, 0.8, -0.46840912)
+mesh = SubResource("BoxMesh_ogs58")
 skeleton = NodePath("../EyeL")
 
 [node name="SelectionBox" type="MeshInstance3D" parent="."]
@@ -67,18 +65,21 @@ transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 visible = false
 material_override = ExtResource("2_xdyq8")
 transparency = 0.65
-mesh = SubResource("CapsuleMesh_xdyq8")
+mesh = SubResource("BoxMesh_pv0j2")
 
 [node name="IsMoving" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 visible = false
 material_override = SubResource("StandardMaterial3D_xdyq8")
 transparency = 0.5
-mesh = SubResource("CapsuleMesh_l6pv5")
+mesh = SubResource("BoxMesh_1whco")
 
 [node name="IsFinished" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 visible = false
 material_override = SubResource("StandardMaterial3D_16svf")
 transparency = 0.5
-mesh = SubResource("CapsuleMesh_pv0j2")
+mesh = SubResource("BoxMesh_spkmn")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_xdyq8")
