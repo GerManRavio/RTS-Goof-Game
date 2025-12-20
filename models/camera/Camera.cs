@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
+using RTSGoofGame.models.navigation;
 using RTSGoofGame.models.unit;
 
 namespace RTSGoofGame.models.camera;
@@ -25,6 +26,9 @@ public partial class Camera : Camera3D
     private readonly Queue<float> _rotationCameraQueue = new();
     private bool _isRotating;
     private readonly HashSet<Unit> _selectedUnits = [];
+    
+    private FlowField _currentFlowField;
+    [Export] public Node3D DebugLabelContainer;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -278,6 +282,14 @@ public partial class Camera : Camera3D
 
         var targetPosition = (Vector3)result["position"];
         
+        _currentFlowField ??= new FlowField(20, 20, 1.0f, Vector3.Zero);
+    
+        _currentFlowField.Generate(targetPosition, DebugLabelContainer);
+        
+        foreach(var unit in _selectedUnits)
+        {
+            // unit.SetFlowField(_currentFlowField);
+        }
     }
 
     private void DeselectAll()

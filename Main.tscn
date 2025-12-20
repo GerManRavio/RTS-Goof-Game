@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://ct5uxuo0ggbg1"]
+[gd_scene load_steps=9 format=3 uid="uid://ct5uxuo0ggbg1"]
 
 [ext_resource type="PackedScene" uid="uid://blhdxgp8rgxat" path="res://models/camera/Camera.tscn" id="1_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://pwget8yoir44" path="res://models/unit/Unit.tscn" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://bcg4j31cwadto" path="res://SpawnUnits.cs" id="2_uu6xs"]
-[ext_resource type="Material" uid="uid://btxgpjcx0wcpa" path="res://ressources/tron_shader_circle.tres" id="4_cm0pq"]
 
 [sub_resource type="Environment" id="Environment_cm0pq"]
 glow_enabled = true
@@ -15,9 +14,10 @@ glow_blend_mode = 0
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_r0du0"]
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_r0du0"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_cm0pq"]
+size = Vector2(1, 1)
 
-[node name="Main" type="Node3D"]
+[node name="Main" type="Node"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.43051115, 0.90258527, 0, -0.90258527, 0.43051115, 100, 100, 100)
@@ -33,14 +33,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.569088, 3.433138, -17.910
 gizmo_extents = 1.28
 
 [node name="Timer" type="Timer" parent="." node_paths=PackedStringArray("SpawnPositionNode")]
-wait_time = 0.001
-autostart = true
 script = ExtResource("2_uu6xs")
 UnitScene = ExtResource("2_r0du0")
 SpawnPositionNode = NodePath("../Marker3D")
 
-[node name="Camera" parent="." instance=ExtResource("1_uu6xs")]
-transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 6.8159957, 8.259956)
+[node name="Camera" parent="." node_paths=PackedStringArray("DebugLabelContainer") instance=ExtResource("1_uu6xs")]
+transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 6.8998203, 6.8159957, 14.319103)
+current = true
+DebugLabelContainer = NodePath("../LabelContainer")
 
 [node name="Ground" type="StaticBody3D" parent="."]
 
@@ -48,8 +48,8 @@ transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.70710
 shape = SubResource("WorldBoundaryShape3D_r0du0")
 debug_fill = false
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground/CollisionShape3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
-material_override = ExtResource("4_cm0pq")
-mesh = SubResource("PlaneMesh_r0du0")
-skeleton = NodePath("../..")
+mesh = SubResource("PlaneMesh_cm0pq")
+
+[node name="LabelContainer" type="Node3D" parent="."]

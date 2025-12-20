@@ -9,12 +9,13 @@ albedo_color = Color(0.21185514, 0.665903, 0.8846337, 1)
 material = SubResource("StandardMaterial3D_61xdx")
 size = Vector3(1.16, 1, 0.695)
 
-[node name="Camera" type="Camera3D" node_paths=PackedStringArray("SelectionBox", "FpsLabel", "UnitCountLabel", "UnitSelectionCountLabel")]
+[node name="Camera" type="Camera3D" node_paths=PackedStringArray("SelectionBox", "FpsLabel", "UnitCountLabel", "UnitSelectionCountLabel", "DebugLabelContainer")]
 script = ExtResource("1_61xdx")
 SelectionBox = NodePath("Control/SelectionBoxUI")
 FpsLabel = NodePath("Control/FPS Label")
 UnitCountLabel = NodePath("Control/Unit Count")
 UnitSelectionCountLabel = NodePath("Control/Unit Selection Count")
+DebugLabelContainer = NodePath("")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
