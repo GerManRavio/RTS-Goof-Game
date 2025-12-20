@@ -30,6 +30,7 @@ public partial class Unit : CharacterBody3D
     public override void _Ready()
     {
         base._Ready();
+        SetPhysicsProcess(false);
         NavigationAgent.NavigationFinished += OnNavigationFinished;
         NavigationAgent.PathChanged += OnPathChanged;
         NavigationAgent.VelocityComputed += OnVelocityComputed;
@@ -66,18 +67,21 @@ public partial class Unit : CharacterBody3D
         }
 
         MoveAndSlide();
+        SetPhysicsProcess(true);
     }
 
     private void OnNavigationFinished()
     {
         IsFinishedNode.Visible = true;
         IsMovingNode.Visible = false;
+        SetPhysicsProcess(false);
     }
 
     private void OnPathChanged()
     {
         IsFinishedNode.Visible = false;
         IsMovingNode.Visible = true;
+        SetPhysicsProcess(true);
     }
 
     public override void _PhysicsProcess(double delta)
