@@ -1,10 +1,27 @@
-[gd_scene load_steps=9 format=3 uid="uid://ct5uxuo0ggbg1"]
+[gd_scene load_steps=13 format=3 uid="uid://ct5uxuo0ggbg1"]
 
 [ext_resource type="PackedScene" uid="uid://blhdxgp8rgxat" path="res://models/camera/Camera.tscn" id="1_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://pwget8yoir44" path="res://models/unit/Unit.tscn" id="2_r0du0"]
 [ext_resource type="Script" uid="uid://bcg4j31cwadto" path="res://SpawnUnits.cs" id="2_uu6xs"]
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_r0du0"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cm0pq"]
+noise = SubResource("FastNoiseLite_r0du0")
+seamless = true
+in_3d_space = true
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r0du0"]
+sky_top_color = Color(0.038296003, 0.4845819, 0.6785259, 1)
+sky_horizon_color = Color(0.18596941, 0.7250321, 0.84670085, 1)
+sky_cover = SubResource("NoiseTexture2D_cm0pq")
+
+[sub_resource type="Sky" id="Sky_r0du0"]
+sky_material = SubResource("ProceduralSkyMaterial_r0du0")
+
 [sub_resource type="Environment" id="Environment_cm0pq"]
+background_mode = 2
+sky = SubResource("Sky_r0du0")
 glow_enabled = true
 glow_blend_mode = 0
 
@@ -15,7 +32,6 @@ glow_blend_mode = 0
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_r0du0"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_cm0pq"]
-size = Vector2(1, 1)
 
 [node name="Main" type="Node"]
 
